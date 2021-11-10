@@ -9,21 +9,23 @@ export class WithCredentialsInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
     if (
-      req.url.includes('/security/login') ||
+      // req.url.includes('/security/login') ||
       req.url.includes('/security/verifycode') ||
-      req.url.includes('/security/refresh-token') ||
-      req.url.includes('assets')
+      req.url.includes('/security/refresh-token')
     ) {
       const cloned = req.clone({
         withCredentials: true
       });
+  
       return next.handle(cloned);
+
     }
 
     return next.handle(req);
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const WithCredentialsInterceptorProvider = [
   {
     provide: HTTP_INTERCEPTORS,

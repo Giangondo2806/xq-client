@@ -1,11 +1,11 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, ipcMain, screen, session } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
+import { electron } from 'process';
 
 // Initialize remote module
 require('@electron/remote/main').initialize();
-
 let win: BrowserWindow = null;
 const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
@@ -17,21 +17,23 @@ function createWindow(): BrowserWindow {
 
   // Create the browser window.
   win = new BrowserWindow({
-    x: 0,
-    y: 0,
-    width: size.width,
-    height: size.height,
+    width: 1200,
+    height: 900,
+
+
+
     webPreferences: {
+      allowRunningInsecureContent: true,
+      webSecurity: true,
       nodeIntegration: true,
-      allowRunningInsecureContent: (serve) ? true : false,
       contextIsolation: false,
-      enableRemoteModule : true
+      enableRemoteModule: true
     },
   });
 
-
+  win.webContents.openDevTools();
   if (serve) {
-    win.webContents.openDevTools();
+
     require('electron-reload')(__dirname, {
       electron: require(path.join(__dirname, '/../node_modules/electron'))
     });
@@ -41,7 +43,7 @@ function createWindow(): BrowserWindow {
     let pathIndex = './index.html';
 
     if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
-       // Path when running electron in local folder
+      // Path when running electron in local folder
       pathIndex = '../dist/index.html';
     }
 
@@ -60,15 +62,31 @@ function createWindow(): BrowserWindow {
     win = null;
   });
 
+  // win.setMenuBarVisibility(false);
+
   return win;
 }
+
+ipcMain.on('loginScreen', () => {
+  win.unmaximize();
+  win.setSize(400, 600, false);
+  // win.resizable = false;
+  // const cookie = { url: 'http://localhost:3333/api/security/refresh-token', name: 'rtok', value: 'dummy' }
+  // session.defaultSession.cookies.set(cookie)
+
+    
+})
 
 try {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
-  app.on('ready', () => setTimeout(createWindow, 400));
+  app.on('ready', () => {
+    setTimeout(createWindow, 400)
+    session.defaultSession.cookies.get({}).then(data=>console.log(data));
+
+  });
 
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {
@@ -80,6 +98,7 @@ try {
   });
 
   app.on('activate', () => {
+
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (win === null) {

@@ -16,6 +16,8 @@ import { DetailModule } from './detail/detail.module';
 
 import { AppComponent } from './app.component';
 import { AccountModule } from './account/account.module';
+import { AuthenticatedInterceptorProvider } from './core/http-config/interceptors/authenticated.interceptor';
+import { WithCredentialsInterceptorProvider } from './core/http-config/interceptors/with-credentials.interceptor';
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -40,7 +42,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
       }
     })
   ],
-  providers: [],
+  providers: [AuthenticatedInterceptorProvider,WithCredentialsInterceptorProvider],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

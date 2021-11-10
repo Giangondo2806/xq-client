@@ -1,0 +1,30 @@
+
+html, body {
+    margin: 0;
+    width: 400px;
+    height: 600px;
+    overflow: hidden
+  }
+
+.background {
+    background: url('./../../assets/img/background.jpg');
+    width: 400px;
+    height: 600px;
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: contain;
+    overflow: hidden
+}
+.content {
+    margin-top: 300px;
+    margin-left: 180px;
+    justify-content: center;
+}
+
+.content>.logo {
+    font-size: 60px;
+}
+.content> button {
+    border-radius: 5px;
+
+}

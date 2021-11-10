@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { fstat } from 'fs';
+import { AuthService } from '../core/services/auth/auth.service';
+import { ElectronService } from '../core/services/electron/electron.service';
 
 @Component({
   selector: 'app-account',
@@ -7,9 +11,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AccountComponent implements OnInit {
 
-  constructor() { }
+  constructor(private electronService: ElectronService,
+    private authSerivice: AuthService
+
+  ) { }
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  loginForm = new FormGroup({
+    username: new FormControl(''),
+    password: new FormControl(''),
+  });
 
   ngOnInit(): void {
+    this.electronService.ipcRenderer.send('loginScreen');
+
   }
 
   changeTheme(theme: 'default' | 'dark'): void {
@@ -26,5 +41,11 @@ export class AccountComponent implements OnInit {
     } else {
       dom.remove();
     }
+  }
+
+  login(): void {
+    this.authSerivice.login(this.loginForm.value.username, this.loginForm.value.password).subscribe(data=>{
+      this.electronService.fs.writeFileSync('./cookie.txt', 'dddd');
+    });
   }
 }

@@ -9,12 +9,13 @@ import { Injectable } from '@angular/core';
 import isAfter from 'date-fns/isAfter';
 import { combineLatest, defer, Observable, of } from 'rxjs';
 import { mergeMap, switchMap, take } from 'rxjs/operators';
-import { AppState, AuthService, expirySelector, tokenSelector } from '@ohayojp/client/core/stores'
-import { Store } from '@ngrx/store';
+import { AuthService } from '../../services/auth/auth.service';
+import { CacheService } from '../../services/cache/cache.service';
+
 
 @Injectable()
 export class AuthenticatedInterceptor implements HttpInterceptor {
-  constructor(private readonly store: Store<AppState>,
+  constructor(private readonly cacheService: CacheService,
     private readonly authService: AuthService) { }
   intercept(
     req: HttpRequest<unknown>,
@@ -31,8 +32,8 @@ export class AuthenticatedInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
     return combineLatest([
-      this.store.select(tokenSelector),
-      this.store.select(expirySelector)
+      this.cacheService.getToken(),
+      this.cacheService.getExpired()
     ]).pipe(
       take(1),
       mergeMap(([token, expired]) => {
@@ -55,6 +56,7 @@ export class AuthenticatedInterceptor implements HttpInterceptor {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const AuthenticatedInterceptorProvider = [
   {
     provide: HTTP_INTERCEPTORS,
