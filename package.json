@@ -46,10 +46,13 @@
     "@angular/core": "12.1.2",
     "@angular/forms": "12.1.2",
     "@angular/language-service": "12.1.2",
+    "@angular/material": "13.0.0",
     "@angular/platform-browser": "12.1.2",
     "@angular/platform-browser-dynamic": "12.1.2",
     "@angular/router": "12.1.2",
+    "@delon/theme": "12.3.0",
     "@electron/remote": "1.2.0",
+    "ng-alain": "12.3.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.1.0",
     "zone.js": "~0.11.4"

@@ -4,6 +4,9 @@ import { PageNotFoundComponent } from './shared/components';
 
 import { HomeRoutingModule } from './home/home-routing.module';
 import { DetailRoutingModule } from './detail/detail-routing.module';
+import { AccountRoutingModule } from './account/account-routing.module';
+import { UnauthenticatedGuard } from './core/http-config/guards/unauthenticated.guard';
+import { AuthenticatedGuard } from './core/http-config/guards/authenticated.guard';
 
 const routes: Routes = [
   {
@@ -21,7 +24,8 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
     HomeRoutingModule,
-    DetailRoutingModule
+    DetailRoutingModule,
+    AccountRoutingModule,
   ],
   exports: [RouterModule]
 })

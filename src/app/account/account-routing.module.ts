@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from './home.component';
-import { AuthenticatedGuard } from '../core/http-config/guards/authenticated.guard';
+import { AccountComponent } from './account.component';
+import { UnauthenticatedGuard } from '../core/http-config/guards/unauthenticated.guard';
 
 const routes: Routes = [
   {
-    path: 'home',
-    component: HomeComponent,
-    canActivate: [AuthenticatedGuard]
+    path: 'account',
+    component: AccountComponent,
+    canActivate: [UnauthenticatedGuard],
   }
 ];
 
@@ -17,4 +17,4 @@ const routes: Routes = [
   imports: [CommonModule, RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class HomeRoutingModule {}
+export class AccountRoutingModule { }
