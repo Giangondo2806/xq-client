@@ -83,9 +83,11 @@ export class AuthService {
     return this.securityClient.resendVerificationEmail(email);
   }
 
-  retrieveTokenOnPageLoad(): Observable<TokenResultVm> {
+  retrieveTokenOnPageLoad(): Observable<UserInformationVm> {
     return this.securityClient.refreshToken().pipe(
-      tap(() => {
+      tap((token) => {
+        if (token)
+          {this.cacheService.setLoadState(false);}
       }
       ),
       catchError((err: ApiException) => {

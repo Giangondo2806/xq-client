@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { UserInformationVm } from '../api-client/api.client';
 
 @Injectable({ providedIn: 'root' })
 export class CacheService {
     private $user: BehaviorSubject<any> = new BehaviorSubject(null);
     private $token: BehaviorSubject<string> = new BehaviorSubject<string>(null);
     private $expired: BehaviorSubject<Date> = new BehaviorSubject<Date>(null);
+    private $loadState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
-    public setUser(user: any) {
+    public setUser(user: UserInformationVm) {
         this.$user.next(user);
     }
 
-    public getUser(): any {
+    public getUser(): Observable<UserInformationVm> {
         return this.$user;
     }
 
@@ -19,7 +21,7 @@ export class CacheService {
         this.$token.next(token);
     }
 
-    public getToken(): BehaviorSubject<string> {
+    public getToken(): Observable<string> {
         return this.$token;
     }
 
@@ -27,8 +29,16 @@ export class CacheService {
         this.$expired.next(token);
     }
 
-    public getExpired(): BehaviorSubject<Date> {
+    public getExpired(): Observable<Date> {
         return this.$expired;
+    }
+
+    public setLoadState(state: boolean) {
+        this.$loadState.next(state);
+    }
+
+    public getLoadState(): Observable<boolean> {
+        return this.$loadState;
     }
 
 

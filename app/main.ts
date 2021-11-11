@@ -1,14 +1,25 @@
-import { app, BrowserWindow, ipcMain, screen, session } from 'electron';
+import { app, BrowserWindow, ipcMain, protocol, screen, session } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
-import { electron } from 'process';
 
 // Initialize remote module
 require('@electron/remote/main').initialize();
 let win: BrowserWindow = null;
 const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
+
+
+protocol.registerSchemesAsPrivileged([{
+  scheme: 'atom',
+  privileges: {
+    standard: true,
+    secure: true,
+    allowServiceWorkers: true,
+    supportFetchAPI: true
+  }
+}]);
+
 
 function createWindow(): BrowserWindow {
 
@@ -20,14 +31,10 @@ function createWindow(): BrowserWindow {
     width: 1200,
     height: 900,
 
-
-
     webPreferences: {
-      allowRunningInsecureContent: true,
-      webSecurity: true,
       nodeIntegration: true,
       contextIsolation: false,
-      enableRemoteModule: true
+      enableRemoteModule: true,
     },
   });
 
@@ -48,9 +55,7 @@ function createWindow(): BrowserWindow {
     }
 
     win.loadURL(url.format({
-      pathname: path.join(__dirname, pathIndex),
-      protocol: 'file:',
-      slashes: true
+      pathname: path.join(__dirname, pathIndex)
     }));
   }
 
@@ -61,8 +66,7 @@ function createWindow(): BrowserWindow {
     // when you should delete the corresponding element.
     win = null;
   });
-
-  // win.setMenuBarVisibility(false);
+  win.setMenuBarVisibility(false);
 
   return win;
 }
@@ -74,7 +78,13 @@ ipcMain.on('loginScreen', () => {
   // const cookie = { url: 'http://localhost:3333/api/security/refresh-token', name: 'rtok', value: 'dummy' }
   // session.defaultSession.cookies.set(cookie)
 
-    
+
+})
+
+
+ipcMain.on('homeScreen', () => {
+  win.unmaximize();
+  win.setSize(1200, 900, false);
 })
 
 try {
@@ -83,8 +93,16 @@ try {
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
   app.on('ready', () => {
-    setTimeout(createWindow, 400)
-    session.defaultSession.cookies.get({}).then(data=>console.log(data));
+    protocol.registerFileProtocol('app', (request, callback) => {
+      const url = request.url.substr(6);
+      callback({
+        path: path.normalize(`${__dirname}/${url}`)
+      });
+    });
+    session.defaultSession.cookies.remove('http://localhost','rtok');
+    session.defaultSession.cookies.get({}).then(data => console.log(data));
+    createWindow();
+
 
   });
 

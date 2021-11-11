@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { fstat } from 'fs';
 import { AuthService } from '../core/services/auth/auth.service';
 import { ElectronService } from '../core/services/electron/electron.service';
@@ -12,7 +13,8 @@ import { ElectronService } from '../core/services/electron/electron.service';
 export class AccountComponent implements OnInit {
 
   constructor(private electronService: ElectronService,
-    private authSerivice: AuthService
+    private authSerivice: AuthService,
+    private router: Router
 
   ) { }
 
@@ -45,7 +47,10 @@ export class AccountComponent implements OnInit {
 
   login(): void {
     this.authSerivice.login(this.loginForm.value.username, this.loginForm.value.password).subscribe(data=>{
-      this.electronService.fs.writeFileSync('./cookie.txt', 'dddd');
+     if(data){
+      this.router.navigateByUrl('/home');
+     }
+
     });
   }
 }
